@@ -26,7 +26,23 @@ cmake_minimum_required(VERSION 3.0.2)
 #
 # cppxgen: Converts extended C++ files (.cppx) to standard C++ files (.h and .cpp)
 #=================================================
-project(cppx VERSION 0.0.1)
+project(cppx VERSION 0.0.1.1)
+
+#-------------------------------------------------
+# Make sure a C++ 11 compiler is available
+#-------------------------------------------------
+if (NOT MSVC)
+    include(CheckCXXCompilerFlag)
+
+    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_Cx11)
+
+    if (COMPILER_SUPPORTS_Cx11)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    else()
+        message(WARNING "The compiler ${CMAKE_CXX_COMPILER} does not appear to support C++11. Please select a different C++ compiler if that is the case.")
+    endif()
+endif()
+#-------------------------------------------------
 
 #-------------------------------------------------
 # Boost
@@ -49,7 +65,12 @@ endif()
 # cppxgen
 # Converts extended C++ files (.cppx) to standard C++ files (.h and .cpp)
 #-------------------------------------------------
-add_executable(cppxgen src/cppxgen.cpp)
+set (source_files
+	src/cppxgen.cpp
+	src/console.cpp
+) 
+
+add_executable(cppxgen ${source_files})
 
 set_property(
 	SOURCE src/cppxgen.cpp
