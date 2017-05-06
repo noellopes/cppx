@@ -1,7 +1,7 @@
 /*
 	Noel Lopes is a Professor at the Polytechnic of Guarda, Portugal
 	and a Researcher at the CISUC - University of Coimbra, Portugal
-	Copyright (C) 2017 Noel de Jesus Mendonça Lopes
+	Copyright (C) 2017 Noel de Jesus MendonÃ§a Lopes
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.

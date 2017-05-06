@@ -51,13 +51,13 @@ set(Boost_USE_STATIC_LIBS     ON)
 set(Boost_USE_MULTITHREADED   ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-find_package(Boost 1.63.0 REQUIRED filesystem)
+find_package(Boost 1.58.0 REQUIRED filesystem)
 
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})   
 else()
-    message(FATAL_ERROR "Could not find Boost 1.63.0 or greater (http://www.boost.org/).")
+    message(FATAL_ERROR "Could not find Boost 1.58.0 or greater (http://www.boost.org/).")
 endif()
 #-------------------------------------------------
 
