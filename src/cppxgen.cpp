@@ -20,6 +20,8 @@
 /// cppxgen tool: converts extended C++ files (.cppx) to standard C++ files (.h and .cpp)
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <boost/filesystem.hpp>
 
@@ -28,32 +30,69 @@
 using namespace cppx;
 using namespace std;
 
-/// Function for obtaining the extended C++ files to process.
+/// Returns the extended C++ files to process.
 /// \param base_dir Base directory where to look for the .cppx files. 
 ///        Its subdirectories will also be scanned for .cppx files.
 /// \param files_to_process Vector that will be appended with the files 
 ///        to process contained in the \a base_dir directory and its 
 ///        subdirectories.
-void GetFilesToProcess(const boost::filesystem::path & base_dir, std::vector<boost::filesystem::path> & files_to_process) {
+/// \return A vector containing the .cppx files to process
+vector<boost::filesystem::path> GetFilesToProcess(const char * base_dir) {
 	using namespace boost::filesystem;
+
+	vector<path> files_to_process;
 
 	try {
 		for (const auto & entry : recursive_directory_iterator(base_dir)) {
 			auto path = entry.path();
-			if (path.extension() == ".cppx") {
+			if (path.extension() == ".cppx" && is_regular_file(path)) {
 				files_to_process.push_back(path);
 			}
 		}
-	} catch (const filesystem_error& exception) {
+	} catch (const filesystem_error & exception) {
 		Console::ErrorStream() << "An error ocurred while obtaining the files to process: " << exception.what() << endl;
 	}
+
+	return files_to_process;
+}
+
+/// Returns the contents of a file.
+/// \param filename Filename path.
+/// \return A string containing the the contents read from the file
+string GetFileContents(const boost::filesystem::path & filename) {
+	ostringstream buffer;
+
+	string line;
+	for (ifstream input(filename.string()); !input.eof(); getline(input, line)) {
+		buffer << line << endl;
+	}
+
+	return buffer.str();
+}
+
+/// Generates C++ code (.h and .cpp files) from a specific extended C++ file (.cppx)
+/// \param filename filename (.cppx) to process
+/// \sa GenerateCode
+void GenerateFileCode(const boost::filesystem::path & filename) {
+	using namespace boost::filesystem;
+
+	string contents = GetFileContents(filename);
+
+	// todo: parse contents
+
+	// ...
+
+	// todo: generate.h and.cpp files
+
+	std::ofstream header_file(path(filename).replace_extension("h").string());
+	std::ofstream cpp_file(path(filename).replace_extension("cpp").string());
 }
 
 /// Generates C++ code (.h and .cpp files) from all extended C++ files (.cppx) contained within the 
 /// \a base_dir directory and its subdirectories
 /// \param base_dir base directory for processing the .cppx files
 /// \return 0 if successfull. An error code otherwise.
-/// \sa GenerateCodeForDirectory
+/// \sa GenerateFileCode
 int GenerateCode(const char * base_dir) {
 	using namespace boost::filesystem;
 
@@ -72,8 +111,7 @@ int GenerateCode(const char * base_dir) {
 
 	Console::OutputStream() << "Processing directory: " << base_dir << endl;
 
-	vector<path> files_to_process;
-	GetFilesToProcess(path(base_dir), files_to_process);
+	vector<path> files_to_process = GetFilesToProcess(base_dir);
 
 	auto number_files_to_process = files_to_process.size();
 
@@ -82,8 +120,19 @@ int GenerateCode(const char * base_dir) {
 	} else {
 		Console::OutputStream() << "Found " << number_files_to_process << " files to process:" << endl;
 
-		for (const auto & f : files_to_process) {
-			Console::OutputStream() << f << "(" << file_size(f) << " bytes)" << endl;
+		for (const path & f : files_to_process) {
+			boost::system::error_code error;
+			auto size = file_size(f, error);
+
+			Console::OutputStream() << f;
+
+			if (!error) {
+				Console::OutputStream() << " (" << size << " bytes)";
+			}
+
+			Console::OutputStream() << endl;
+
+			GenerateFileCode(f);
 		}
 
 		Console::OutputStream() << endl << "We have yet to develop the code generators' modules." << endl;
