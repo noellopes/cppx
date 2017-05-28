@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.0.2)
 #
 # cppxgen: Converts extended C++ files (.cppx) to standard C++ files (.h and .cpp)
 #=================================================
-project(cppx VERSION 0.0.1.1)
+project(cppx VERSION 0.0.2.0)
 
 #-------------------------------------------------
 # Make sure a C++ 11 compiler is available
@@ -51,7 +51,7 @@ set(Boost_USE_STATIC_LIBS     ON)
 set(Boost_USE_MULTITHREADED   ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-find_package(Boost 1.58.0 REQUIRED filesystem)
+find_package(Boost 1.58.0 REQUIRED filesystem iostreams)
 
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
@@ -79,4 +79,4 @@ set_property(
 	CPPX_VERSION_STRING="cppxgen version ${PROJECT_VERSION}" 
 )
 
-target_link_libraries(cppxgen Boost::filesystem)
+target_link_libraries(cppxgen Boost::filesystem Boost::iostreams)
