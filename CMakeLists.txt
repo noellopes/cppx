@@ -2,7 +2,7 @@
 #
 # Noel Lopes is a Professor at the Polytechnic of Guarda, Portugal
 # and a Researcher at the CISUC - University of Coimbra, Portugal
-# Copyright (C) 2017 Noel de Jesus Mendonça Lopes
+# Copyright (C) 2017, 2018 Noel de Jesus Mendonça Lopes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@
 #=================================================
 
 cmake_minimum_required(VERSION 3.0.2)
+
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
 #=================================================
 # Project: cppx
